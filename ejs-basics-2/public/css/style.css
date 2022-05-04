@@ -1,0 +1,15 @@
+.container {
+  height: 98vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.item {
+  display: inline-block;
+}
+
+h3 {
+  font-family: "Courier New", Courier, monospace;
+}

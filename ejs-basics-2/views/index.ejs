@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+  <!-- Importing header.ejs-->
+  <%- include('header')%>
+
+  <body>
+    <div class="container">
+      <div class="item">
+        <!-- Sending Data to Server -->
+        <form action="http://localhost:3000/" method="post">
+          <h3>Enter Your age:</h3>
+          <input type="number" name="userAge" id="" />
+          <button class="btn-md btn-primary">Submit</button>
+        </form>
+
+        <!-- Retrieving Data from Server -->
+        <h3>Your age is: <b><%= UserAge %></b></h3>
+        <h3>Age Group: <b><%= AgeGroup %></b></h3>
+      </div>
+    </div>
+
+    <script src="/js/bootstrap.min.css"></script>
+    <script src="/js/jquery.js"></script>
+  </body>
+</html>
