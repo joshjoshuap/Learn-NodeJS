@@ -3,27 +3,12 @@ const express = require("express");
 
 const router = express.Router(); // to reuse routing to another server file
 
-const products = [];
+const productController = require("../controllers/product");
 
-// Get
-router.get("/add-product", (req, res) => {
-  // res.sendFile(path.join(__dirname, "../", "views", "add-product.html")); // rendering html files
+// GET: /admin/add-product
+router.get("/add-product", productController.getAddProduct);
 
-  res.render("add-product", {
-    pageTitle: "Add Product",
-    path: "/admin/add-product",
-    formCSS: true,
-    productCSS: true,
-    activeProduct: true,
-  }); // passing object response to add-product.ejs
-});
+// POST: /admin/add-product
+router.post("/add-product", productController.postAddProduct);
 
-// POST
-router.post("/add-product", (req, res) => {
-  products.push({ title: req.body.title });
-  console.log(req.body); // get data value from the form in router/get("/add-product")
-  res.redirect("/");
-});
-
-exports.routes = router;
-exports.products = products;
+module.exports = router;
