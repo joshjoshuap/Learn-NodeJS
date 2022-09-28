@@ -1,4 +1,5 @@
 const ProductModel = require("../models/product");
+const CartModel = require("../models/cart");
 
 // Get: index.ejs
 exports.getIndex = (req, res) => {
@@ -22,12 +23,33 @@ exports.getProducts = (req, res, next) => {
   });
 };
 
+// Get: product-list.ejs, getting params :id
+exports.getProduct = (req, res) => {
+  const prodId = req.params.productId;
+  ProductModel.findById(prodId, (product) => {
+    res.render("shop/product-detail", {
+      path: "/products",
+      pageTitle: product.title,
+      product: product,
+    });
+  });
+};
+
 // Get: cart.ejs
 exports.getCart = (req, res) => {
   res.render("shop/cart", {
     path: "/cart",
     pageTitle: "Your Cart",
   });
+};
+
+// Post: cart.ejs
+exports.postCart = (req, res) => {
+  const prodId = req.body.productId;
+  ProductModel.findById(prodId, (product) => {
+    CartModel.addProduct(prodId, product.price);
+  });
+  res.redirect("/cart"); // router.get('/cart')
 };
 
 // Get: order.ejs

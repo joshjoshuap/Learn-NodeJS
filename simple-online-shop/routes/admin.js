@@ -5,13 +5,16 @@ const router = express.Router(); // to reuse routing to another server file
 
 const adminController = require("../controllers/admin");
 
-// Get: /admin/product
+// Get: Display Product List
 router.get("/products", adminController.getProduct);
 
-// Get: /admin/add-product
+// Get: Display Add Product Form
 router.get("/add-product", adminController.getAddProduct);
 
-// Post: /admin/add-product
+// Post: Add Product
 router.post("/add-product", adminController.postAddProduct);
+
+// Get: Display Edit Product Form
+router.get("/edit-product/:productId", adminController.getEditProduct);
 
 module.exports = router;

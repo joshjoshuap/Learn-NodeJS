@@ -12,7 +12,11 @@
         <img src="<%= product.imageUrl %>" height="200" width="200" />
         <p>Price: <%= product.price %></p>
         <p class="product_description"><%= product.description %></p>
-        <div class="product_btn"><button>Add to Cart</button></div>
+
+        <div class="form_action">
+          <a class="btn" href="/products/<%= product.id %>">Details</a>
+          <%- include('../layouts/add-to-cart.ejs', {product: product}) %>
+        </div>
       </div>
       <% } %>
     </div>
