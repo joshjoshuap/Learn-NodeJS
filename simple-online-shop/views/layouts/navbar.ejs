@@ -4,10 +4,24 @@
       <li class="nav_link <%= path === '/' ? 'link_active' : '' %>">
         <a href="/">Shop</a>
       </li>
+      <li class="nav_link <%= path === '/products' ? 'link_active' : '' %>">
+        <a href="/products">Product</a>
+      </li>
+      <li class="nav_link <%= path === '/cart' ? 'link_active' : '' %>">
+        <a href="/cart">Cart</a>
+      </li>
+      <li class="nav_link <%= path === '/orders' ? 'link_active' : '' %>">
+        <a href="/orders">Order</a>
+      </li>
       <li
         class="nav_link <%= path === '/admin/add-product' ? 'link_active' : '' %>"
       >
         <a href="/admin/add-product">Add Product</a>
+      </li>
+      <li
+        class="nav_link <%= path === '/admin/products' ? 'link_active' : '' %>"
+      >
+        <a href="/admin/products">Admin Product</a>
       </li>
     </ul>
   </nav>

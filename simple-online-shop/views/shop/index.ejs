@@ -1,6 +1,6 @@
-<%- include('./layouts/start.ejs') %>
+<%- include('../layouts/start.ejs') %>
 <body>
-  <%- include('./layouts/navbar.ejs') %>
+  <%- include('../layouts/navbar.ejs') %>
   <main>
     <h1 class="primary_title">Products</h1>
     <p class="secondary_title">List of Products</p>
@@ -9,11 +9,9 @@
       <% for (let product of prods) { %>
       <div class="product_card">
         <h1 class="product_title"><%= product.title %></h1>
-        <p class="product_description">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Inventore
-          nisi veniam suscipit temporibus cumque dolor odit eius provident velit
-          quidem?
-        </p>
+        <img src="<%= product.imageUrl %>" height="200" width="200" />
+        <p>Price: <%= product.price %></p>
+        <p class="product_description"><%= product.description %></p>
         <div class="product_btn"><button>Add to Cart</button></div>
       </div>
       <% } %>
@@ -23,4 +21,4 @@
     <% } %>
   </main>
 </body>
-<%- include('./layouts/end.ejs') %>
+<%- include('../layouts/end.ejs') %>

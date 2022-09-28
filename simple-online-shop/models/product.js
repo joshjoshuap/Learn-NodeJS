@@ -8,7 +8,7 @@ const p = path.join(
 );
 
 const getProductsFromFile = (cb) => {
-  fs.readFileSync(p, (err, fileContent) => {
+  fs.readFile(p, (err, fileContent) => {
     if (err) {
       cb([]);
     } else {
@@ -18,11 +18,13 @@ const getProductsFromFile = (cb) => {
 };
 
 module.exports = class Product {
-  constructor(title) {
+  constructor(title, imageUrl, description, price) {
     this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
   }
 
-  // adding product data to array
   save() {
     getProductsFromFile((products) => {
       products.push(this);
@@ -32,7 +34,6 @@ module.exports = class Product {
     });
   }
 
-  // retrieve product data on array
   static get(cb) {
     getProductsFromFile(cb);
   }
