@@ -1,20 +1,24 @@
-const express = require("express");
-// const path = require("path");
+const path = require('path');
 
-const router = express.Router(); // to reuse routing to another server file
+const express = require('express');
 
-const adminController = require("../controllers/admin");
+const adminController = require('../controllers/admin');
 
-// Get: Display Product List
-router.get("/products", adminController.getProduct);
+const router = express.Router();
 
-// Get: Display Add Product Form
-router.get("/add-product", adminController.getAddProduct);
+// /admin/add-product => GET
+router.get('/add-product', adminController.getAddProduct);
 
-// Post: Add Product
-router.post("/add-product", adminController.postAddProduct);
+// /admin/products => GET
+router.get('/products', adminController.getProducts);
 
-// Get: Display Edit Product Form
-router.get("/edit-product/:productId", adminController.getEditProduct);
+// /admin/add-product => POST
+router.post('/add-product', adminController.postAddProduct);
+
+router.get('/edit-product/:productId', adminController.getEditProduct);
+
+router.post('/edit-product', adminController.postEditProduct);
+
+router.post('/delete-product', adminController.postDeleteProduct);
 
 module.exports = router;

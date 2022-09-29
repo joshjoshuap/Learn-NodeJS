@@ -12,10 +12,11 @@
         <img src="<%= product.imageUrl %>" height="200" width="200" />
         <p>Price: <%= product.price %></p>
         <p class="product_description"><%= product.description %></p>
-        <a class="btn product_btn" href="/admin/edit-product">Edit</a>
+        <a class="btn product_btn" href="/admin/edit-product/<%= product.id %>?edit=true">Edit</a>
         
-        <form action="/admin/delete-product">
-          <button class="btn product_btn">Delete</button></div>
+        <form action="/admin/delete-product" method="post"> 
+          <input type="hidden" value="<%= product.id %>" name="productId">
+          <button class="btn product_btn">Delete</button></div> 
         </form>
       <% } %>
     </div>
