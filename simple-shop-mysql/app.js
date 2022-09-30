@@ -10,6 +10,8 @@ const ProductModel = require("./models/product");
 const UserModel = require("./models/user");
 const CartModel = require("./models/cart");
 const CartItemModel = require("./models/cart-item");
+const OrderModel = require("./models/order");
+const OrderItemModel = require("./models/order-items");
 
 // Contoller
 const errorController = require("./controllers/error");
@@ -17,6 +19,7 @@ const errorController = require("./controllers/error");
 // Routes
 const shopRoute = require("./routes/shop");
 const adminRoutes = require("./routes/admin");
+const Order = require("./models/order");
 
 // Configure
 app.set("view engine", "ejs"); // ejs template engine
@@ -39,17 +42,20 @@ app.use("/admin", adminRoutes); // routes/admin.js
 app.use(errorController.get404); // 404.ejs
 
 // Database Relationship
-ProductModel.belongsTo(User, { constraints: true, onDelete: 'CASCADE' });
+ProductModel.belongsTo(UserModel, { constraints: true, onDelete: "CASCADE" });
 UserModel.hasMany(ProductModel);
 UserModel.hasOne(CartModel);
 CartModel.belongsTo(UserModel);
 CartModel.belongsToMany(ProductModel, { through: CartItemModel });
 ProductModel.belongsToMany(CartModel, { through: CartItemModel });
+OrderModel.belongsTo(UserModel);
+UserModel.hasMany(OrderModel);
+OrderModel.belongsToMany(ProductModel, { through: OrderItemModel });
 
 // creating table, name define in product model insert into
 sequelize
   .sync()
-  .then((res) => {
+  .then((result) => {
     return UserModel.findByPk(1);
   })
   .then((user) => {
