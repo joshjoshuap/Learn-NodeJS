@@ -1,15 +1,17 @@
 const mongodb = require("mongodb");
-const getDb = require("../util/database").getDb; // database connection
+const getDb = require("../util/database").getDb;
 
 class Product {
-  constructor(title, price, imageUrl, description, id) {
+  constructor(title, price, description, imageUrl, id, userId) {
     this.title = title;
     this.price = price;
-    this.imageUrl = imageUrl;
     this.description = description;
+    this.imageUrl = imageUrl;
     this._id = id ? new mongodb.ObjectId(id) : null;
+    this.userId = userId;
   }
 
+  // Inserting Product
   save() {
     const db = getDb();
     let dbOp;
@@ -19,7 +21,6 @@ class Product {
         .collection("products")
         .updateOne({ _id: this._id }, { $set: this });
     } else {
-      // Adding Product
       dbOp = db.collection("products").insertOne(this);
     }
     return dbOp
@@ -31,6 +32,7 @@ class Product {
       });
   }
 
+  // Fetching Product
   static fetchAll() {
     const db = getDb();
     return db
@@ -38,6 +40,7 @@ class Product {
       .find()
       .toArray()
       .then((products) => {
+        console.log(products);
         return products;
       })
       .catch((err) => {
@@ -45,6 +48,21 @@ class Product {
       });
   }
 
+  // Delete Product
+  static deleteById(prodId) {
+    const db = getDb();
+    return db
+      .collection("products")
+      .deleteOne({ _id: new mongodb.ObjectId(prodId) })
+      .then((result) => {
+        console.log("Deleted");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  // FInding Product Id
   static findById(prodId) {
     const db = getDb();
     return db
@@ -52,20 +70,8 @@ class Product {
       .find({ _id: new mongodb.ObjectId(prodId) })
       .next()
       .then((product) => {
+        console.log(product);
         return product;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  static deleteById(prodId) {
-    const db = getDb();
-    return db
-      .collection("products")
-      .deleteOne({ _id: new mongodb.ObjectId(prodId) })
-      .then(() => {
-        console.log("Product Deleted");
       })
       .catch((err) => {
         console.log(err);
