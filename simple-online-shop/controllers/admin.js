@@ -3,6 +3,8 @@ const ProductModel = require("../models/product");
 // Get: Display Product List
 exports.getProducts = (req, res, next) => {
   ProductModel.find()
+    // .select("title price")
+    // .populate("userId", "name")
     .then((products) => {
       res.render("admin/products", {
         path: "/admin/products",
@@ -33,6 +35,7 @@ exports.postAddProduct = (req, res, next) => {
     imageUrl: imageUrl,
     price: price,
     description: description,
+    userId: req.user._id, // adding
   });
   product
     .save()
