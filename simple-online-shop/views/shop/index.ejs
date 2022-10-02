@@ -1,0 +1,28 @@
+<%- include('../layouts/start.ejs') %>
+<body>
+  <%- include('../layouts/navbar.ejs') %>
+  <main>
+    <h1 class="primary_title">Products</h1>
+    <p class="secondary_title">List of Products</p>
+    <% if(prods.length > 0) { %>
+    <div class="product_grid">
+      <% for (let product of prods) { %>
+      <div class="product_card">
+        <h1 class="product_title"><%= product.title %></h1>
+        <img src="<%= product.imageUrl %>" height="200" width="200" />
+        <p>Price: <%= product.price %></p>
+        <p class="product_description"><%= product.description %></p>
+
+        <div class="form_action">
+          <a class="btn" href="/products/<%= product._id %>">Details</a>
+          <%- include('../layouts/add-to-cart.ejs', {product: product}) %>
+        </div>
+      </div>
+      <% } %>
+    </div>
+    <% } else { %>
+    <h1>No Product Found</h1>
+    <% } %>
+  </main>
+</body>
+<%- include('../layouts/end.ejs') %>
