@@ -33,10 +33,14 @@
       <li class="nav_link <%= path === '/login' ? 'link_active' : '' %>">
         <a href="/login">Login</a>
       </li>
+      <li class="nav_link <%= path === '/signup' ? 'link_active' : '' %>">
+        <a href="/signup">Signup </a>
+      </li>
       <% } else { %>
       <!-- Display if authenticated-->
       <li class="nav_link <%= path === '/logout' ? 'link_active' : '' %>">
         <form action="/logout" method="post">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <button type="submit">Logout</button>
         </form>
       </li>

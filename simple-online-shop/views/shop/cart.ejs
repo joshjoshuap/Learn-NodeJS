@@ -14,12 +14,14 @@
             value="<%= p.productId._id %>"
             name="productId"
           />
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
           <button class="btn danger" type="submit">Delete</button>
         </form>
       </li>
       <% }) %>
     </ul>
     <form class="form" action="/create-order" method="post">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
       <button class="btn" type="submit">Order Now</button>
     </form>
     <% } else { %>

@@ -10,7 +10,6 @@ exports.getIndex = (req, res, next) => {
         path: "/",
         pageTitle: "Shop",
         prods: products,
-        isAuthenticated: req.session.isLoggedIn,
       });
     })
     .catch((err) => console.log(err));
@@ -72,7 +71,7 @@ exports.postOrder = (req, res) => {
       });
       const order = new OrderModel({
         user: {
-          name: req.user.name,
+          email: req.user.email,
           userId: req.user,
         },
         products: products,

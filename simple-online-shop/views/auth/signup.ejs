@@ -2,8 +2,8 @@
 <body>
   <%- include('../layouts/navbar.ejs') %>
   <main>
-    <form class="form" action="/login" method="POST">
-      <h1>Login Form</h1>
+    <form class="form" action="/signup" method="POST">
+      <h1>Register</h1>
       <div>
         <label for="email">Email</label>
         <input
@@ -23,9 +23,19 @@
           id="password"
         />
       </div>
-      
+
+      <div>
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          class="input_text"
+          type="text"
+          name="confirmPassword"
+          id="confirmPassword"
+        />
+      </div>
+
       <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
-      <button class="btn" type="submit">Login</button>
+      <button class="btn" type="submit">Signup</button>
     </form>
   </main>
 </body>
