@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const path = require("path");
 const csrf = require("csurf");
+const flash = require("connect-flash");
 
 // Database Connection String
 const MongoDB_URI =
@@ -44,6 +45,7 @@ app.use(
 ); // intialize session authentication
 
 app.use(csrfProtection); // enable csrf protection
+app.use(flash());
 
 // User Session Authentication
 app.use((req, res, next) => {
