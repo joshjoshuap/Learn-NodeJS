@@ -7,6 +7,8 @@
       <li class="nav_link <%= path === '/products' ? 'link_active' : '' %>">
         <a href="/products">Product</a>
       </li>
+      <% if (isAuthenticated) { %>
+      <!-- display if the user logged in / authenticated -->
       <li class="nav_link <%= path === '/cart' ? 'link_active' : '' %>">
         <a href="/cart">Cart</a>
       </li>
@@ -23,6 +25,22 @@
       >
         <a href="/admin/products">Admin Product</a>
       </li>
+      <% } %>
+    </ul>
+    <ul class="nav_item">
+      <% if (!isAuthenticated) { %>
+      <!-- Display if not authenticated, logged in-->
+      <li class="nav_link <%= path === '/login' ? 'link_active' : '' %>">
+        <a href="/login">Login</a>
+      </li>
+      <% } else { %>
+      <!-- Display if authenticated-->
+      <li class="nav_link <%= path === '/logout' ? 'link_active' : '' %>">
+        <form action="/logout" method="post">
+          <button type="submit">Logout</button>
+        </form>
+      </li>
+      <% } %>
     </ul>
   </nav>
 </header>

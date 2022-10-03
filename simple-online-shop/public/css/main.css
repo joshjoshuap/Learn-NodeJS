@@ -6,6 +6,7 @@ body {
 /* Navigation */
 .navigation {
   background-color: black;
+  display: flex;
 }
 
 .nav_item {

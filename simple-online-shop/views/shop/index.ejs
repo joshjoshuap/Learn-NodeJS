@@ -15,7 +15,9 @@
 
         <div class="form_action">
           <a class="btn" href="/products/<%= product._id %>">Details</a>
-          <%- include('../layouts/add-to-cart.ejs', {product: product}) %>
+          <% if (isAuthenticated) { %> <%-
+          include('../layouts/add-to-cart.ejs', {product: product}) %>
+          <% } %>
         </div>
       </div>
       <% } %>
