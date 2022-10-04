@@ -5,7 +5,7 @@
     <% if (errorMessage) { %>
     <h2><%= errorMessage %></h2>
     <% } %>
-    <form class="form" action="/signup" method="POST">
+    <form class="form" action="/signup" method="POST" novalidate>
       <h1>Register</h1>
       <div>
         <label for="email">Email</label>
@@ -14,7 +14,7 @@
           type="email"
           id="email"
           name="email"
-          id="email"
+          value="<%= oldInput.email %>"
         />
       </div>
       <div>
@@ -24,6 +24,7 @@
           type="password"
           name="password"
           id="password"
+          value="<%= oldInput.password %>"
         />
       </div>
 
@@ -31,9 +32,10 @@
         <label for="confirmPassword">Confirm Password</label>
         <input
           class="input_text"
-          type="text"
+          type="password"
           name="confirmPassword"
           id="confirmPassword"
+          value="<%= oldInput.confirmPassword %>"
         />
       </div>
 

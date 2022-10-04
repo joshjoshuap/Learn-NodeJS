@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const UserModel = require("../models/user");
+const { validationResult } = require("express-validator");
 
 // Get: Display login form
 exports.getLogin = (req, res, next) => {
@@ -13,6 +14,10 @@ exports.getLogin = (req, res, next) => {
     path: "/login",
     pageTitle: "Login",
     errorMessage: message,
+    oldInput: {
+      email: "",
+      password: "",
+    },
   });
 };
 
@@ -20,25 +25,55 @@ exports.getLogin = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
+
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/login", {
+      path: "/login",
+      pageTitle: "Login",
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email: email,
+        password: password,
+      },
+    });
+  }
+
   UserModel.findOne({ email: email })
     .then((user) => {
       if (!user) {
-        req.flash("errorUser", "Invalid Email or Password"); // alert user if email & passowrd invalid
-        return res.redirect("/login");
+        return res.status(422).render("auth/login", {
+          path: "/login",
+          pageTitle: "Login",
+          errorMessage: "Invalid email or password.",
+          oldInput: {
+            email: email,
+            password: password,
+          },
+          validationErrors: [],
+        });
       }
       bcrypt
         .compare(password, user.password)
         .then((doMatch) => {
           if (doMatch) {
-            req.session.isLoggedIn = true; // create session
+            req.session.isLoggedIn = true;
             req.session.user = user;
             return req.session.save((err) => {
               console.log(err);
               res.redirect("/");
             });
           }
-          console.log("Incorrect Password");
-          return res.redirect("/login");
+          return res.status(422).render("auth/login", {
+            path: "/login",
+            pageTitle: "Login",
+            errorMessage: "Invalid email or password.",
+            oldInput: {
+              email: email,
+              password: password,
+            },
+            validationErrors: [],
+          });
         })
         .catch((err) => {
           console.log(err);
@@ -68,6 +103,11 @@ exports.getSignUp = (req, res) => {
     path: "/signup",
     pageTitle: "Signup",
     errorMessage: message,
+    oldInput: {
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
   });
 };
 
@@ -75,32 +115,35 @@ exports.getSignUp = (req, res) => {
 exports.postSignUp = (req, res) => {
   const email = req.body.email; // get value from form
   const password = req.body.password;
-  const confirmPassword = req.body.confirmPassword;
-  UserModel.findOne({ email: email })
-    .then((userDoc) => {
-      req.flash("errorUser", "Email Address Already Exist");
-      if (userDoc) {
-        return res.redirect("/signup");
-      }
-      return bcrypt
-        .hash(password, 12)
-        .then((hashedPassword) => {
-          const user = new UserModel({
-            email: email,
-            password: hashedPassword,
-            cart: { items: [] },
-          });
-          return user.save();
-        })
-        .then(() => {
-          res.redirect("/");
-          console.log("Register Successful");
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(422).render("auth/signup", {
+      path: "/signup",
+      pageTitle: "Signup",
+      errorMessage: errors.array()[0].msg,
+      oldInput: {
+        email: email,
+        password: password,
+        confirmPassword: req.body.confirmPassword,
+      },
+    }); //render signup form if validation not matched
+  }
+  bcrypt
+    .hash(password, 12)
+    .then((hashedPassword) => {
+      const user = new UserModel({
+        email: email,
+        password: hashedPassword,
+        cart: { items: [] },
+      });
+      return user.save();
+    })
+    .then(() => {
+      res.redirect("/");
+      console.log("Register Successful");
     })
     .catch((err) => {
-      console.log("Register Failed", err);
+      console.log("Register Failed");
+      console.log(err);
     });
 };
