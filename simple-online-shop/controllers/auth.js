@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const UserModel = require("../models/user");
 
+// Get: Display login form
 exports.getLogin = (req, res, next) => {
   let message = req.flash("errorUser");
   if (message.length > 0) {
@@ -15,6 +16,7 @@ exports.getLogin = (req, res, next) => {
   });
 };
 
+// Post: logging in account
 exports.postLogin = (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
@@ -46,6 +48,7 @@ exports.postLogin = (req, res, next) => {
     .catch((err) => console.log(err));
 };
 
+// Post: logging out
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
     console.log(err);
@@ -53,6 +56,7 @@ exports.postLogout = (req, res, next) => {
   });
 };
 
+// Get: Display sign up form
 exports.getSignUp = (req, res) => {
   let message = req.flash("errorUser");
   if (message.length > 0) {
@@ -67,6 +71,7 @@ exports.getSignUp = (req, res) => {
   });
 };
 
+// Post: signing up account
 exports.postSignUp = (req, res) => {
   const email = req.body.email; // get value from form
   const password = req.body.password;
@@ -88,8 +93,11 @@ exports.postSignUp = (req, res) => {
           return user.save();
         })
         .then(() => {
-          console.log("Register Successful");
           res.redirect("/");
+          console.log("Register Successful");
+        })
+        .catch((err) => {
+          console.log(err);
         });
     })
     .catch((err) => {

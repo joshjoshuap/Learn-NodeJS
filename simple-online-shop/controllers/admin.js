@@ -2,9 +2,7 @@ const ProductModel = require("../models/product");
 
 // Get: Display Product List
 exports.getProducts = (req, res, next) => {
-  ProductModel.find()
-    // .select("title price")
-    // .populate("userId", "name")
+  ProductModel.find({ userId: req.user._id })
     .then((products) => {
       res.render("admin/products", {
         path: "/admin/products",
@@ -84,15 +82,17 @@ exports.postEditProduct = (req, res, next) => {
   // find product id & update
   ProductModel.findById(prodId)
     .then((product) => {
+      if (product.userId.toString() !== req.user._id.toString()) {
+        return res.redirect("/");
+      }
       product.title = updatedTitle;
       product.price = updatedPrice;
       product.imageUrl = updatedImageUrl;
       product.description = updatedDesc;
-      return product.save();
-    })
-    .then(() => {
-      console.log("Update Product Successful");
-      res.redirect("/admin/products");
+      return product.save().then(() => {
+        console.log("Update Product Successful");
+        res.redirect("/admin/products");
+      });
     })
     .catch((err) => console.log("Update Product Failed", err));
 };
@@ -100,7 +100,7 @@ exports.postEditProduct = (req, res, next) => {
 // Post: Delete Product
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  ProductModel.findByIdAndRemove(prodId)
+  ProductModel.deleteOne({ _id: prodId, userId: req.user._id })
     .then(() => {
       console.log("Delete Product Successful");
       res.redirect("/admin/products");
