@@ -60,7 +60,7 @@ exports.postLogin = (req, res, next) => {
             req.session.isLoggedIn = true;
             req.session.user = user;
             return req.session.save((err) => {
-              console.log(err);
+              console.log('Successful Logged In');
               res.redirect("/");
             });
           }
@@ -80,7 +80,11 @@ exports.postLogin = (req, res, next) => {
           res.redirect("/login");
         });
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
 };
 
 // Post: logging out
@@ -143,7 +147,8 @@ exports.postSignUp = (req, res) => {
       console.log("Register Successful");
     })
     .catch((err) => {
-      console.log("Register Failed");
-      console.log(err);
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
     });
 };

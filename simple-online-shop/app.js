@@ -45,7 +45,7 @@ app.use(
 ); // intialize session authentication
 
 app.use(csrfProtection); // enable csrf protection
-app.use(flash());
+app.use(flash()); // flash display validation
 
 // User Session Authentication
 app.use((req, res, next) => {
@@ -54,10 +54,15 @@ app.use((req, res, next) => {
   }
   UserModel.findById(req.session.user._id)
     .then((user) => {
+      if (!user) {
+        return next();
+      }
       req.user = user;
       next();
     })
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      throw new Error(err);
+    });
 });
 
 app.use((req, res, next) => {
@@ -69,7 +74,12 @@ app.use((req, res, next) => {
 app.use(shopRoutes); // routes/shop.js
 app.use(authRoutes); // routes/auth.js
 app.use("/admin", adminRoutes); // routes/admin.js
+app.use("/500", errorController.get500); // 500.ejs
 app.use(errorController.get404); // 404.ejs
+
+app.use((error, req, res, next) => {
+  res.redirect("/500");
+}); // error handling
 
 // Database Connection, Server
 mongoose
@@ -81,5 +91,5 @@ mongoose
     console.log("Database Connected");
   })
   .catch((err) => {
-    console.log("Database Connection Failed ", err);
+    console.log("Database Connection Failed \n",err);
   });
