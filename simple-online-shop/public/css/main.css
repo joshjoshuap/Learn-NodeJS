@@ -107,3 +107,25 @@ body {
   width: 50%;
   margin: 0 auto;
 }
+
+.pagination {
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.pagination-link {
+  font-size: 16px;
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.pagination-active {
+  background-color: black;
+  color: white;
+  font-size: 16px;
+  border: 2px solid black;
+  border-radius: 10px;
+  padding: 10px;
+}

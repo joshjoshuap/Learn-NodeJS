@@ -58,7 +58,7 @@ app.use(
   multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
 ); // form image file upload
 app.use(express.static(path.join(__dirname, "public"))); // static files public folder
-app.use('/images', express.static(path.join(__dirname, "images"))); // static files images folder
+app.use("/images", express.static(path.join(__dirname, "images"))); // static files images folder
 app.use(
   session({
     secret: "samplesecret",
