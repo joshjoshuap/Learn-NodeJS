@@ -90,7 +90,6 @@ exports.postLogin = (req, res, next) => {
 // Post: logging out
 exports.postLogout = (req, res, next) => {
   req.session.destroy((err) => {
-    console.log(err);
     res.redirect("/");
   });
 };

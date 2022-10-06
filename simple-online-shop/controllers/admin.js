@@ -23,30 +23,51 @@ exports.getAddProduct = (req, res, next) => {
     pageTitle: "Add Product",
     path: "/admin/add-product",
     editing: false,
+    hasError: false,
+    errorMessage: null,
   });
 };
 
 // Post: Adding Product
 exports.postAddProduct = (req, res, next) => {
   const title = req.body.title; // getting value from form
-  const imageUrl = req.body.imageUrl;
+  const image = req.file; // get image file
   const price = req.body.price;
   const description = req.body.description;
+
+  // check if image file is not image
+  if (!image) {
+    return res.status(422).render("admin/edit-product", {
+      pageTitle: "Add Product",
+      path: "/admin/add-product",
+      editing: false,
+      hasError: true,
+      product: {
+        title: title,
+        price: price,
+        description: description,
+      },
+      errorMessage: "Attached file is not an image.",
+    });
+  }
+
+  const imageFile = image.path; // getting image file
+
   const product = new ProductModel({
     title: title,
-    imageUrl: imageUrl,
+    imageUrl: imageFile,
     price: price,
     description: description,
     userId: req.user, // adding user
   });
   product
     .save()
-    .then((result) => {
-      // console.log(result);
+    .then(() => {
       console.log("Creating Product Successful");
       res.redirect("/admin/products");
     })
     .catch((err) => {
+      console.log("Creating Product Failed\n", err);
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
@@ -59,6 +80,7 @@ exports.getEditProduct = (req, res, next) => {
   if (!editMode) {
     return res.redirect("/");
   }
+
   const prodId = req.params.productId; // get productid
   ProductModel.findById(prodId)
     .then((product) => {
@@ -70,6 +92,7 @@ exports.getEditProduct = (req, res, next) => {
         path: "/admin/edit-product",
         editing: editMode,
         product: product,
+        errorMessage: null,
       });
     })
     .catch((err) => {
@@ -84,7 +107,7 @@ exports.postEditProduct = (req, res, next) => {
   const prodId = req.body.productId;
   const updatedTitle = req.body.title;
   const updatedPrice = req.body.price;
-  const updatedImageUrl = req.body.imageUrl;
+  const updatedImage = req.file;
   const updatedDesc = req.body.description;
 
   // find product id & update
@@ -95,7 +118,9 @@ exports.postEditProduct = (req, res, next) => {
       }
       product.title = updatedTitle;
       product.price = updatedPrice;
-      product.imageUrl = updatedImageUrl;
+      if (updatedImage) {
+        product.imageUrl = updatedImage.path;
+      }
       product.description = updatedDesc;
       return product.save().then(() => {
         console.log("Update Product Successful");

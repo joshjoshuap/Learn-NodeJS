@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const path = require("path");
 const csrf = require("csurf");
 const flash = require("connect-flash");
+const multer = require("multer");
 
 // Database Connection String
 const MongoDB_URI =
@@ -18,6 +19,25 @@ const store = new mongoDbStore({
   collection: "sessions",
 }); // add session in mongodb
 const csrfProtection = csrf(); // csrf protection
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "images"); // image folder path upload
+  },
+  filename: (req, file, cb) => {
+    cb(null, file.originalname); // convert image binary to image type
+  },
+}); // set file upload storage
+const fileFilter = (req, file, cb) => {
+  if (
+    file.mimetype === "image/png" ||
+    file.mimetype === "image/jpg" ||
+    file.mimetype === "image/jpeg"
+  ) {
+    cb(null, true);
+  } else {
+    cb(null, false);
+  }
+}; // set filter image upload file type
 
 // Model
 const UserModel = require("./models/user");
@@ -33,8 +53,12 @@ const authRoutes = require("./routes/auth");
 // Configure
 app.set("view engine", "ejs"); // ejs template engine
 app.set("views", "views"); // render views ejs file
-app.use(bodyParser.urlencoded({ extended: true })); // form value, post request
+app.use(bodyParser.urlencoded({ extended: true })); // get form value, post request
+app.use(
+  multer({ storage: fileStorage, fileFilter: fileFilter }).single("image")
+); // form image file upload
 app.use(express.static(path.join(__dirname, "public"))); // static files public folder
+app.use('/images', express.static(path.join(__dirname, "images"))); // static files images folder
 app.use(
   session({
     secret: "samplesecret",
@@ -78,6 +102,7 @@ app.use("/500", errorController.get500); // 500.ejs
 app.use(errorController.get404); // 404.ejs
 
 app.use((error, req, res, next) => {
+  console.log(error);
   res.redirect("/500");
 }); // error handling
 
@@ -91,5 +116,5 @@ mongoose
     console.log("Database Connected");
   })
   .catch((err) => {
-    console.log("Database Connection Failed \n",err);
+    console.log("Database Connection Failed\n", err);
   });

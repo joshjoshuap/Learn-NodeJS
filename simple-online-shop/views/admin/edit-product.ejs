@@ -2,10 +2,14 @@
 <body>
   <%- include('../layouts/navbar.ejs') %>
   <main>
+    <% if (errorMessage) { %>
+      <h2><%= errorMessage %></h2>
+      <% } %>
     <form
       class="form"
       action="/admin/<% if (editing) { %>edit-product<% } else { %>add-product<% } %>"
       method="POST"
+      encType="multipart/form-data"
     >
       <div>
         <label for="title">Title</label>
@@ -18,14 +22,8 @@
         />
       </div>
       <div>
-        <label for="imageUrl">Image URL</label>
-        <input
-          class="input_text"
-          type="text"
-          name="imageUrl"
-          id="imageUrl"
-          value="<% if (editing) { %><%= product.imageUrl %><% } %>"
-        />
+        <label for="image">Image</label>
+        <input type="file" name="image" id="image" />
       </div>
       <div>
         <label for="price">Price</label>
