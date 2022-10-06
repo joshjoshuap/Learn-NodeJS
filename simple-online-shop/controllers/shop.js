@@ -1,3 +1,7 @@
+const fs = require("fs");
+const path = require("path");
+const PDFDocument = require("pdfkit");
+
 const ProductModel = require("../models/product");
 const OrderModel = require("../models/order");
 
@@ -55,6 +59,58 @@ exports.getProduct = (req, res, next) => {
     });
 };
 
+// Get: Display Cart List
+exports.getCart = (req, res, next) => {
+  req.user
+    .populate("cart.items.productId")
+    .then((user) => {
+      const products = user.cart.items;
+      res.render("shop/cart", {
+        path: "/cart",
+        pageTitle: "Your Cart",
+        products: products,
+      });
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+// Post: Adding to Cart
+exports.postCart = (req, res, next) => {
+  const prodId = req.body.productId;
+  ProductModel.findById(prodId)
+    .then((product) => {
+      return req.user.addToCart(product);
+    })
+    .then((result) => {
+      console.log("Cart Added");
+      res.redirect("/cart");
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
+// Post: Deleting Cart Items
+exports.postCartDeleteProduct = (req, res, next) => {
+  const prodId = req.body.productId;
+  req.user
+    .removeFromCart(prodId)
+    .then(() => {
+      res.redirect("/cart");
+    })
+    .catch((err) => {
+      const error = new Error(err);
+      error.httpStatusCode = 500;
+      return next(error);
+    });
+};
+
 // Get: Display Order Page
 exports.getOrders = (req, res, next) => {
   OrderModel.find({ "user.userId": req.user._id })
@@ -102,62 +158,57 @@ exports.postOrder = (req, res) => {
     });
 };
 
+// Get: Display Invoice
+exports.getInvoice = (req, res, next) => {
+  const orderId = req.params.orderId;
+  // check user authentication & autorization
+  OrderModel.findById(orderId)
+    .then((order) => {
+      if (!order) {
+        console.log("No order Found");
+        return next(new Error(err));
+      }
+
+      if (order.user.userId.toString() !== req.user._id.toString()) {
+        console.log("Order Unuthorized");
+        return next(new Error(err));
+      }
+
+      const invoiceName = "invoices-" + orderId + ".pdf";
+      const invoicePath = path.join("data", "invoices", invoiceName);
+
+      const pdfDoc = new PDFDocument();
+      res.setHeader("Content-Type", "application/pdf");
+      res.setHeader(
+        "Content-Disposition",
+        'attachment; filename="' + invoiceName + '"'
+      );
+      pdfDoc.pipe(fs.createWriteStream(invoicePath));
+      pdfDoc.pipe(res);
+      let totalPrice = 0;
+      pdfDoc.fontSize(26).text("Order Invoice", {
+        underline: true,
+      });
+      pdfDoc.text("------------------------");
+      order.products.forEach((prod) => {
+        totalPrice += prod.quantity * prod.product.price;
+        pdfDoc
+          .fontSize(16)
+          .text(
+            prod.product.title + "-" + prod.quantity + " $" + prod.product.price
+          );
+      });
+      pdfDoc.text("Total Price:" + totalPrice);
+
+      pdfDoc.end();
+    })
+    .catch((err) => next(err));
+};
+
 // Get: Display Checkout Page
 exports.getCheckout = (req, res, next) => {
   res.render("shop/checkout", {
     path: "/checkout",
     pageTitle: "Checkout",
   });
-};
-
-// Get: Display Cart List
-exports.getCart = (req, res, next) => {
-  req.user
-    .populate("cart.items.productId")
-    .then((user) => {
-      const products = user.cart.items;
-      res.render("shop/cart", {
-        path: "/cart",
-        pageTitle: "Your Cart",
-        products: products,
-      });
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
-};
-
-// Post: Adding to Cart
-exports.postCart = (req, res, next) => {
-  const prodId = req.body.productId;
-  ProductModel.findById(prodId)
-    .then((product) => {
-      return req.user.addToCart(product);
-    })
-    .then((result) => {
-      console.log('Cart Added');
-      res.redirect("/cart");
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
-};
-
-// Post: Deleting Cart Items
-exports.postCartDeleteProduct = (req, res, next) => {
-  const prodId = req.body.productId;
-  req.user
-    .removeFromCart(prodId)
-    .then(() => {
-      res.redirect("/cart");
-    })
-    .catch((err) => {
-      const error = new Error(err);
-      error.httpStatusCode = 500;
-      return next(error);
-    });
 };

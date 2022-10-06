@@ -1,4 +1,5 @@
 const ProductModel = require("../models/product");
+const fileHelper = require("../util/file");
 
 // Get: Display Product List
 exports.getProducts = (req, res, next) => {
@@ -119,6 +120,7 @@ exports.postEditProduct = (req, res, next) => {
       product.title = updatedTitle;
       product.price = updatedPrice;
       if (updatedImage) {
+        fileHelper.deleteFile(product.imageUrl);
         product.imageUrl = updatedImage.path;
       }
       product.description = updatedDesc;
@@ -137,12 +139,20 @@ exports.postEditProduct = (req, res, next) => {
 // Post: Delete Product
 exports.postDeleteProduct = (req, res, next) => {
   const prodId = req.body.productId;
-  ProductModel.deleteOne({ _id: prodId, userId: req.user._id })
+  ProductModel.findById(prodId)
+    .then((product) => {
+      if (!product) {
+        return next(new Error("Product not Found"));
+      }
+      fileHelper.deleteFile(product.imageUrl);
+      return ProductModel.deleteOne({ _id: prodId, userId: req.user._id });
+    })
     .then(() => {
       console.log("Delete Product Successful");
       res.redirect("/admin/products");
     })
     .catch((err) => {
+      console.log("Delete Product Failed");
       const error = new Error(err);
       error.httpStatusCode = 500;
       return next(error);
