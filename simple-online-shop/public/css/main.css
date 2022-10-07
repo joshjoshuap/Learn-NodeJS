@@ -103,6 +103,11 @@ body {
   text-align: center;
 }
 
+.card-action {
+  width: 80%;
+  margin: 0 auto;
+}
+
 .container {
   width: 50%;
   margin: 0 auto;
