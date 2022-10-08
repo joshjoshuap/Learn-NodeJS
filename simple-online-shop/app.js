@@ -7,10 +7,10 @@ const path = require("path");
 const csrf = require("csurf");
 const flash = require("connect-flash");
 const multer = require("multer");
+require("dotenv").config();
 
 // Database Connection String
-const MongoDB_URI =
-  "mongodb+srv://joshjoshuap1:gdr4uoirbZRbVqI0@cluster1.paalvk5.mongodb.net/shop";
+const MongoDB_URI = process.env.MONGO_URI;
 
 // Intialize
 const app = express();
@@ -110,7 +110,7 @@ app.use((error, req, res, next) => {
 mongoose
   .connect(MongoDB_URI)
   .then(() => {
-    app.listen(3000, () => {
+    app.listen(process.env.PORT || 3000, () => {
       console.log("Server running");
     });
     console.log("Database Connected");
