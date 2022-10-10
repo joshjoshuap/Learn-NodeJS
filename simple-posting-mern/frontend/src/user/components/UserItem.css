@@ -1,0 +1,26 @@
+.user-item {
+  border-bottom: 2px solid black;
+}
+
+.user-link {
+    color: black;
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+}
+
+.user-link:hover {
+  background-color: gray;
+  color: white;
+}
+
+.user-item__info {
+  display: flex;
+  gap: 10px;
+}
+
+.user-item__image {
+  height: 80px;
+  width: 80px;
+}
