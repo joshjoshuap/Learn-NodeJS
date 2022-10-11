@@ -1,9 +1,9 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import Navigation from "./shared/components/navigation/Navigation";
-import User from "./user/pages/User";
-import NewPlace from "./places/pages/NewPlace";
+import Navigation from "./components/Navigation";
+import User from "./pages/User/User";
+import UserPlaces from "./pages/User/UserPlaces";
+import NewPlace from "./pages/Place/NewPlace";
 import "./App.css";
-import UserPlaces from "./places/pages/UserPlaces";
 
 function App() {
   return (

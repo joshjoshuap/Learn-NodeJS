@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 
-import PlaceList from "../components/PlaceList";
+import PlaceList from "../Place/PlaceList";
 
 const dummy_places = [
   {
@@ -10,10 +10,6 @@ const dummy_places = [
     imageUrl:
       "https://luxeadventuretraveler.com/wp-content/uploads/2012/12/Luxe-Adventure-Traveler-Dubai-Burj-Khalifa-6.jpg",
     address: "City, Dubai",
-    location: {
-      lat: 25.197197,
-      long: 55.2721877,
-    },
     creatorId: "u1",
   },
   {
@@ -23,10 +19,6 @@ const dummy_places = [
     imageUrl:
       "https://luxeadventuretraveler.com/wp-content/uploads/2012/12/Luxe-Adventure-Traveler-Dubai-Burj-Khalifa-6.jpg",
     address: "City, Dubai",
-    location: {
-      lat: 25.197197,
-      long: 55.2721877,
-    },
     creatorId: "u2",
   },
 ];

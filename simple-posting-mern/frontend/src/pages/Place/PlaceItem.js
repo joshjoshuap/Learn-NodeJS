@@ -1,4 +1,4 @@
-import Button from "../../shared/components/navigation/FormElements/Button";
+import Button from "../../components/Button";
 import "./PlaceItem.css";
 
 const PlaceItem = (props) => {

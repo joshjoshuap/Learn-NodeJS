@@ -1,9 +1,9 @@
-import UserList from "../components/UserList";
+import UserList from "./UserList";
 
 const User = () => {
   const USERS = [
     {
-      id: 1,
+      id: "u1",
       name: "Joshua",
       image:
         "https://1000logos.net/wp-content/uploads/2016/10/Apple-Logo-500x281.png",
