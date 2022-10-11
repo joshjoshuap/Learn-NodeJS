@@ -12,3 +12,12 @@ ul {
   height: 200px;
   width: 200px;
 }
+
+.place-actions {
+  border: 2px solid black;
+  border-radius: 5px;
+  color: black;
+  text-decoration: none;
+  margin: 0 10px;
+  padding: 5px 10px;
+}

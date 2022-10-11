@@ -1,4 +1,4 @@
-import Button from "../../components/Button";
+import { Link } from "react-router-dom";
 import "./PlaceItem.css";
 
 const PlaceItem = (props) => {
@@ -12,10 +12,13 @@ const PlaceItem = (props) => {
         <h2>{props.address}</h2>
         <p>{props.description}</p>
       </div>
-      <div className="place-actions">
-        <Button>View Map</Button>
-        <Button to={`/places${props.id}`}>Edit</Button>
-        <Button>Delete</Button>
+      <div>
+        <Link className="place-actions" to={`/places/${props.id}`}>
+          Edit
+        </Link>
+        <Link className="place-actions" to="/delete">
+          Delete
+        </Link>
       </div>
     </li>
   );
