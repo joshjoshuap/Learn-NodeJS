@@ -6,6 +6,6 @@ body {
 
 .center {
   text-align: center;
-  display: flex;
+  display: grid;
   justify-content: center;
 }

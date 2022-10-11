@@ -1,7 +1,7 @@
 const Button = (props) => {
   return (
-    <button type={props.type} onClick={props.onClick} disabled={props.disabled}>
-      {props.children}
+    <button type={props.type} disabled={props.disabled}>
+      {props.name}
     </button>
   );
 };

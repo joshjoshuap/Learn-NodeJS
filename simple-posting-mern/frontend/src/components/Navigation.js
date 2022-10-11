@@ -17,7 +17,7 @@ const Navigation = (props) => {
             </Link>
           </li>
           <li>
-            <Link to="/ul/places" className="navigation-link">
+            <Link to="/u1/places" className="navigation-link">
               My Places
             </Link>
           </li>

@@ -1,0 +1,23 @@
+.place-form {
+    margin: 20px 0;
+}
+
+.input-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .input-label {
+    font-size: 22px;
+    font-weight: 600;
+  }
+  
+  .input-type {
+    font-size: 22px;
+    padding: 5px 10px;
+    border: 2px solid black;
+    border-radius: 5px;
+    outline: none;
+  }
+  
