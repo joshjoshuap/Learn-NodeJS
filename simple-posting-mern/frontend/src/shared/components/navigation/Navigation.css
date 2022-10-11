@@ -1,0 +1,21 @@
+.navigation {
+  display: flex;
+  justify-content: space-around;
+  background-color: black;
+}
+
+.navigation-title {
+  color: white;
+  text-decoration: none;
+}
+
+.navigation-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.navigation-link {
+  color: white;
+  text-decoration: none;
+}

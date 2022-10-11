@@ -1,0 +1,14 @@
+ul {
+  list-style: none;
+}
+
+.place-item-card {
+  width: fit-content;
+  padding: 20px;
+  margin: 10px 0;
+}
+
+.place-image img {
+  height: 200px;
+  width: 200px;
+}

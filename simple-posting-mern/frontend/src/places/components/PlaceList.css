@@ -1,0 +1,11 @@
+ul {
+    list-style: none;
+  }
+  
+  .place-list {
+    border: 2px solid black;
+    border-radius: 5px;
+    width: fit-content;
+    padding: 20px;
+  }
+  
