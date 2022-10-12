@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/auth-context";
 import "./Navigation.css";
 
 const Navigation = (props) => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const auth = useContext(AuthContext);
 
   return (
     <>
@@ -19,32 +20,30 @@ const Navigation = (props) => {
               All User
             </Link>
           </li>
-          {isLoggedIn && (
+          {auth.isLoggedIn && (
             <li>
               <Link to="/u1/places" className="navigation-link">
                 My Places
               </Link>
             </li>
           )}
-          {isLoggedIn && (
+          {auth.isLoggedIn && (
             <li>
               <Link to="/places/new" className="navigation-link">
                 Add Place
               </Link>
             </li>
           )}
-          {isLoggedIn && (
+          {!auth.isLoggedIn && (
             <li>
               <Link to="/logout" className="navigation-link">
-                Logout
+                Login
               </Link>
             </li>
           )}
-          {!isLoggedIn && (
+          {auth.isLoggedIn && (
             <li>
-              <Link to="/login" className="navigation-link">
-                Login
-              </Link>
+              <button onClick={auth.logout}>Logout</button>
             </li>
           )}
         </ul>

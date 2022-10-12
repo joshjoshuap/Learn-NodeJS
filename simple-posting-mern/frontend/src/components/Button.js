@@ -1,6 +1,10 @@
 const Button = (props) => {
   return (
-    <button type={props.type} disabled={props.disabled}>
+    <button
+      className={props.className}
+      type={props.type}
+      disabled={props.disabled}
+    >
       {props.name}
     </button>
   );

@@ -1,11 +1,13 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../context/auth-context";
 import Button from "../../components/Button";
 
 const Login = () => {
+  const auth = useContext(AuthContext);
+
   const [inputEmail, setInputEmail] = useState("");
   const [inputPassword, setInputPassword] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const emailChangeHandler = (event) => {
     setInputEmail(event.target.value);
@@ -17,7 +19,7 @@ const Login = () => {
 
   const formSubmitHandler = (event) => {
     event.preventDefault();
-    console.log(inputEmail, inputPassword);
+    auth.login();
   };
 
   return (
@@ -40,7 +42,7 @@ const Login = () => {
         </div>
         <div className="input-form">
           <label className="input-label" htmlFor="inputPassword">
-            Description
+            Password
           </label>
           <input
             className="input-type"
@@ -53,8 +55,8 @@ const Login = () => {
           />
         </div>
         <Button type="submit" name="Login" />
+        <Link to="/signup">Not Registered? Sign Up Here</Link>
       </form>
-      <Link to="/signup">Not Registered? Sign Up Here</Link>
     </div>
   );
 };
