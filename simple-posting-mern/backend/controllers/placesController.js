@@ -1,4 +1,5 @@
-const { v4: uuidv4 } = require("uuid");
+const { validationResult } = require("express-validator");
+const { v4: uuidv4 } = require("uuid"); // generate unique id
 const HttpError = require("../models/http-error");
 
 let dummy_places = [
@@ -32,6 +33,12 @@ const getPlaceById = (req, res, next) => {
 };
 
 const createPlace = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    throw new HttpError("Invalid input check inputs", 422);
+  }
+
   const { title, description, address, creator } = req.body; // destructing 7 getting data of post body json
 
   const addPlace = {
@@ -48,6 +55,12 @@ const createPlace = (req, res, next) => {
 };
 
 const updatePlace = (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    throw new HttpError("Invalid input check inputs", 422);
+  }
+
   const { title, description, address, creator } = req.body; // destructing 7 getting data of post body json
   const placeId = req.params.pid;
 
@@ -66,27 +79,31 @@ const updatePlace = (req, res, next) => {
 const deletePlace = (req, res, next) => {
   const placeId = req.params.pid;
 
+  if (!dummy_places.find((place) => place.id === place)) {
+    throw new HttpError("No Place Found for the provided Provided ID", 404);
+  }
+
   dummy_places = dummy_places.filter((place) => placeId === placeId);
 
   res.status(200).json({ message: "Place Deleted" });
 };
 
 // get: send/display places by specific user
-const getUserById = (req, res, next) => {
+const getPlacesByUserId = (req, res, next) => {
   const userId = req.params.uid;
   const place = dummy_places.find((place) => {
     return place.creator === userId;
   });
 
-  if (!place) {
-    next(new HttpError("No Place Found for the provided User ID"), 404);
+  if (!place || place.length === 0) {
+    return next(new HttpError("No Place Found for the provided User ID"), 404);
   }
 
   res.json({ place });
 };
 
 exports.getPlaceById = getPlaceById;
-exports.getUserById = getUserById;
+exports.getPlacesByUserId = getPlacesByUserId;
 exports.createPlace = createPlace;
 exports.updatePlace = updatePlace;
 exports.deletePlace = deletePlace;
