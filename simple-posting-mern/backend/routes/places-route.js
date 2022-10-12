@@ -1,53 +1,22 @@
 const express = require("express");
 
+const placesController = require("../controllers/placesController");
+
 const router = express.Router();
 
-const dummy_places = [
-  {
-    id: "p1",
-    title: "greate wall of china",
-    description: "big wall",
-    address: "China",
-    creator: "u1",
-  },
-  {
-    id: "p2",
-    title: "Eiffle Tower",
-    description: "Tower from france",
-    address: "France",
-    creator: "u2",
-  },
-];
-
 // Get: /api/places/id1
-router.get("/:pid", (req, res, next) => {
-  const placeId = req.params.pid; // get params id
-  const place = dummy_places.find((place) => {
-    return place.id === placeId;
-  }); // return specific data based on params id
+router.get("/:pid", placesController.getPlaceById);
 
-  if (!place) {
-    const error = new Error("No Place Found for the provided Place ID");
-    error.code = 404;
-    throw error;
-  }
-  res.json({ place });
-});
+// Post: /api/places/
+router.post("/", placesController.createPlace);
+
+// Patch: /api/places/id1
+router.patch("/:pid", placesController.updatePlace);
+
+// Delete: /api/places/id1
+router.delete("/:pid", placesController.deletePlace);
 
 // Get: /api/places/user/id1
-router.get("/user/:uid", (req, res, next) => {
-  const userId = req.params.uid;
-  const place = dummy_places.find((place) => {
-    return place.creator === userId;
-  });
-
-  if (!place) {
-    const error = new Error("No Place Found for the provided User ID");
-    error.code = 404;
-    next(error);
-  }
-
-  res.json({ place });
-});
+router.get("/user/:uid", placesController.getUserById);
 
 module.exports = router;

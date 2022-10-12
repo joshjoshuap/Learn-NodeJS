@@ -1,15 +1,19 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
+const placeRoute = require("./routes/places-route");
+const HttpError = require("./models/http-error");
+
 const app = express();
 
-const placeRoute = require("./routes/places-route");
-
-app.use(express.urlencoded({ extended: true })); // for parsing data
-app.use(express.static("public")); // accessing public folders
-app.use(express.json());
+app.use(bodyParser.json());
 
 app.use("/api/places", placeRoute); // /api/places/..
+
+app.use((req, res, next) => {
+  const error = new HttpError("Page not Found", 404);
+  throw error;
+}); // error 404 not found
 
 app.use((error, req, res, next) => {
   if (res.headerSent) {
