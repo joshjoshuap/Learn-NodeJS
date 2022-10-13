@@ -1,58 +1,95 @@
 const { validationResult } = require("express-validator");
-const { v4: uuidv4 } = require("uuid"); // generate unique id
 
 const HttpError = require("../models/http-error");
+const UserModel = require("../models/user");
 
-const dummy_user = [
-  {
-    id: "u1",
-    name: "Josh",
-    email: 'test"tes.com',
-    password: "password123",
-  },
-];
+// GET: /api/user/
+const getUsers = async (req, res, next) => {
+  let users;
 
-const getUsers = (req, res, next) => {
-  res.status(200).json({ users: dummy_user });
+  try {
+    users = await UserModel.find({}, "-password"); // return users object except password
+  } catch (err) {
+    console.log("Fetching User Failed");
+    const error = HttpError("Fetching User Failed", 500);
+    return next(error);
+  }
+
+  res.json({ users: users.map((user) => user.toObject({ getters: true })) });
 };
 
-const login = (req, res, next) => {
+// POST: /api/user/login
+const login = async (req, res, next) => {
   const { email, password } = req.body; // get user body post data
 
-  const findUser = dummy_user.find((user) => user.email === email);
+  let existingUser;
+  try {
+    existingUser = await UserModel.findOne({ email: email });
+    console.log("Login Succesful");
+  } catch (err) {
+    console.log("Login Failed");
+    const error = HttpError("Invalid input check inputs", 422);
+    return next(error);
+  }
 
-  if (!findUser || findUser.password !== password) {
-    throw new HttpError("Incorrect Email and Password", 401);
+  // check user validation
+  if (!existingUser || existingUser.password !== password) {
+    console.log("Invalid Email, Password");
+    const error = HttpError("Invalid Email, Password", 422);
+    return next(error);
   }
 
   res.json({ message: "Logged In" });
 };
 
-const signup = (req, res, next) => {
+// POST: /api/user/signup
+const signup = async (req, res, next) => {
+  // server validation
   const errors = validationResult(req);
-
   if (!errors.isEmpty()) {
-    throw new HttpError("Invalid input check inputs", 422);
+    return next(
+      new HttpError(
+        "Name is required, Email must valid, Password length is greater than 6",
+        422
+      )
+    );
   }
 
-  const { name, email, password } = req.body;
+  const { name, email, password, image } = req.body;
 
-  const userExist = dummy_user.find((user) => user.email === email);
-
-  if (userExist) {
-    throw new HttpError("Email/User Alredy Exist", 422);
+  let existingUser;
+  try {
+    existingUser = await UserModel.findOne({ email: email });
+  } catch (err) {
+    console.log("Finding User Error");
+    const error = HttpError("Invalid input check inputs", 422);
+    return next(error);
   }
 
-  const createUser = {
-    id: uuidv4(),
+  if (existingUser) {
+    console.log("Email Exist Already");
+    const error = new HttpError("User Exist Already, Try to Login", 422);
+    return next(error);
+  }
+
+  // create new user
+  const createUser = new UserModel({
     name,
     email,
     password,
-  };
+    image,
+    places: [],
+  });
 
-  dummy_user.push(createUser);
+  try {
+    await createUser.save(); // save new user to database
+  } catch (err) {
+    console.log("Signup Failed", err);
+    const error = new HttpError("Signup Failed", 500);
+    return next(error);
+  }
 
-  res.status(201).json({ user: createUser });
+  res.status(201).json({ user: createUser.toObject({ getters: true }) });
 };
 
 exports.getUsers = getUsers;

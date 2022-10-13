@@ -20,9 +20,10 @@ const placeSchema = new Schema({
     required: true,
   },
   creator: {
-    type: String,
-    required: true,
-  },
+    type: mongoose.Types.ObjectId,
+    require: true,
+    ref: "User",
+  }, // relations place to user model
 });
 
 module.exports = mongoose.model("Place", placeSchema); // collection name
