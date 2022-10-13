@@ -8,6 +8,9 @@ const router = express.Router();
 // Get: /api/places/id1
 router.get("/:pid", placesController.getPlaceById);
 
+// Get: /api/places/user/id1
+router.get("/user/:uid", placesController.getPlacesByUserId);
+
 // Post: /api/places/
 router.post(
   "/",
@@ -28,8 +31,5 @@ router.patch(
 
 // Delete: /api/places/id1
 router.delete("/:pid", placesController.deletePlace);
-
-// Get: /api/places/user/id1
-router.get("/user/:uid", placesController.getPlacesByUserId);
 
 module.exports = router;

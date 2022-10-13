@@ -1,5 +1,7 @@
+require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 
 const placeRoute = require("./routes/places-route");
 const userRoute = require("./routes/users-route");
@@ -25,6 +27,15 @@ app.use((error, req, res, next) => {
   res.json({ message: error.message || "An unkown error occured" });
 });
 
-app.listen(5000, () => {
-  console.log("Server Running");
-});
+// Database COnnection, Server Running
+mongoose
+  .connect(process.env.MONGO_ATLAS_URI)
+  .then(() => {
+    app.listen(process.env.PORT || 5000, () => {
+      console.log("Server Running");
+    });
+    console.log("Database Connected");
+  })
+  .catch((err) => {
+    console.log("Database Connection Failed\n", err);
+  });

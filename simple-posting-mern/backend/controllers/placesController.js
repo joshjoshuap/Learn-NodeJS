@@ -1,105 +1,151 @@
 const { validationResult } = require("express-validator");
-const { v4: uuidv4 } = require("uuid"); // generate unique id
+// const { v4: uuidv4 } = require("uuid"); // generate unique id
 const HttpError = require("../models/http-error");
 
-let dummy_places = [
-  {
-    id: "p1",
-    title: "greate wall of china",
-    description: "big wall",
-    address: "China",
-    creator: "u1",
-  },
-  {
-    id: "p2",
-    title: "Eiffle Tower",
-    description: "Tower from france",
-    address: "France",
-    creator: "u2",
-  },
-];
+const PlaceModel = require("../models/place");
 
-// get: send/display specific place
-const getPlaceById = (req, res, next) => {
-  const placeId = req.params.pid; // get params id
-  const place = dummy_places.find((place) => {
-    return place.id === placeId;
-  }); // return specific data based on params id
+// GET: /api/places/user/:uid - Display Place by User
+const getPlacesByUserId = async (req, res, next) => {
+  const userId = req.params.uid; // get params id
+  let place;
 
-  if (!place) {
-    throw new Error("No Place Found for the provided Place ID", 404);
-  }
-  res.json({ place });
-};
-
-const createPlace = (req, res, next) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    throw new HttpError("Invalid input check inputs", 422);
+  try {
+    place = await PlaceModel.find({ creator: userId }); // find & return all object based on user id
+  } catch (err) {
+    console.log("No Place Found");
+    const error = new HttpError(
+      "No Place Found for the provided Place User Id",
+      500
+    );
+    return next(error);
   }
 
-  const { title, description, address, creator } = req.body; // destructing 7 getting data of post body json
-
-  const addPlace = {
-    id: uuidv4(),
-    title: title,
-    description: description,
-    address: address,
-    creator: creator,
-  };
-
-  dummy_places.push(addPlace);
-
-  res.status(201).json({ place: addPlace });
-};
-
-const updatePlace = (req, res, next) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    throw new HttpError("Invalid input check inputs", 422);
-  }
-
-  const { title, description, address, creator } = req.body; // destructing 7 getting data of post body json
-  const placeId = req.params.pid;
-
-  const updatePlace = { ...dummy_places.find((place) => place.id === placeId) };
-  const placeIndex = dummy_places.findIndex((place) => place.id === placeId);
-  updatePlace.title = title;
-  updatePlace.description = description;
-  updatePlace.address = address;
-  updatePlace.creator = creator;
-
-  dummy_places[placeIndex] = updatePlace;
-
-  res.status(200).json({ place: updatePlace });
-};
-
-const deletePlace = (req, res, next) => {
-  const placeId = req.params.pid;
-
-  if (!dummy_places.find((place) => place.id === place)) {
-    throw new HttpError("No Place Found for the provided Provided ID", 404);
-  }
-
-  dummy_places = dummy_places.filter((place) => placeId === placeId);
-
-  res.status(200).json({ message: "Place Deleted" });
-};
-
-// get: send/display places by specific user
-const getPlacesByUserId = (req, res, next) => {
-  const userId = req.params.uid;
-  const place = dummy_places.find((place) => {
-    return place.creator === userId;
-  });
-
+  // error handling check user params
   if (!place || place.length === 0) {
     return next(new HttpError("No Place Found for the provided User ID"), 404);
   }
 
-  res.json({ place });
+  res.json({ place: place.map((place) => place.toObject({ getters: true })) }); // return/send json data
+};
+
+// GET: /api/places/:pid - Display Place
+const getPlaceById = async (req, res, next) => {
+  let place;
+  const placeId = req.params.pid;
+
+  try {
+    place = await PlaceModel.findById(placeId); // find place by id
+  } catch (err) {
+    console.log("No Place Found");
+    const error = new HttpError(
+      "No Place Found for the provided Place ID",
+      500
+    );
+    return next(error);
+  }
+
+  if (!place || place.length === 0) {
+    console.log("No Place Found");
+    const error = new Error("No Place Found for the provided Place ID", 404);
+    return next(error);
+  }
+
+  res.json({ place: place.toObject({ getters: true }) });
+};
+
+// POST: /api/places/ - Add New Place
+const createPlace = async (req, res, next) => {
+  // server validation
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new HttpError("Invalid input check inputs", 422);
+  }
+
+  const { title, description, image, address, creator } = req.body; // destructing data from post body json
+
+  // assign new data by model schema
+  const addPlace = new PlaceModel({
+    title: title,
+    description: description,
+    image: image,
+    address: address,
+    creator: creator,
+  });
+
+  try {
+    await addPlace.save(); // save added new place to database
+    console.log("Creating Place Successful");
+  } catch (err) {
+    console.log("Creating Place Failed", err);
+    const error = new HttpError("Creating Place Failed", 500);
+    return next(error);
+  }
+
+  res.status(201).json({ place: addPlace });
+};
+
+// PATCH: /api/places/:pid - Edit Place
+const updatePlace = async (req, res, next) => {
+  // server validation
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    throw new HttpError("Invalid input check inputs", 422);
+  }
+
+  let place;
+  const placeId = req.params.pid;
+  const { title, description, image, address, creator } = req.body; // destructing data from post body json
+
+  try {
+    place = await PlaceModel.findById(placeId);
+    console.log("Updating Place Succesful");
+  } catch (err) {
+    console.log("Updating Place Failed");
+    const error = new HttpError("Updating Place Failed", 500);
+    return next(error);
+  }
+
+  // get current data and rewrite old data
+  place.title = title;
+  place.description = description;
+  place.image = image;
+  place.address = address;
+  place.creator = creator;
+
+  try {
+    await place.save(); // saving updated data in database
+  } catch (err) {
+    console.log("Updating Place Failed");
+    const error = new HttpError("Updating Place Failed", 500);
+    return next(error);
+  }
+
+  res.status(200).json({ place: place.toObject({ getters: true }) });
+};
+
+// DELETE: /api/places/:pid - Delete Place
+const deletePlace = async (req, res, next) => {
+  let place;
+  const placeId = req.params.pid;
+
+  try {
+    place = await PlaceModel.findById(placeId);
+    console.log("Deleting Place Succesful");
+  } catch (err) {
+    console.log("Deleting Place Failed");
+    const error = new HttpError("Deleting Place Failed", 500);
+    return next(error);
+  }
+
+  try {
+    await place.remove(); // deleting place in database
+  } catch (err) {
+    console.log("Deleting Place Failed");
+    const error = new HttpError("Deleting Place Failed", 500);
+    return next(error);
+  }
+
+  res.status(200).json({ message: "Place Deleted" });
 };
 
 exports.getPlaceById = getPlaceById;
