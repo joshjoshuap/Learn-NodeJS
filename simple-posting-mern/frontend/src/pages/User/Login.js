@@ -1,13 +1,16 @@
 import { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../context/auth-context";
 import Button from "../../components/Button";
 
 const Login = () => {
   const auth = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [inputEmail, setInputEmail] = useState("");
   const [inputPassword, setInputPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
 
   const emailChangeHandler = (event) => {
     setInputEmail(event.target.value);
@@ -17,24 +20,53 @@ const Login = () => {
     setInputPassword(event.target.value);
   };
 
-  const formSubmitHandler = (event) => {
+  const formSubmitHandler = async (event) => {
     event.preventDefault();
-    auth.login();
+    try {
+      setIsLoading(true);
+      const res = await fetch("http://localhost:5000/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          email: inputEmail,
+          password: inputPassword,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        setIsLoading(false);
+        throw new Error(data.message);
+      }
+
+      navigate("/"); // redirect to login if signup success
+      setIsLoading(false);
+      auth.login(); // set logged in session
+    } catch (err) {
+      console.log("Login Failed", err);
+      setError(err.message);
+      setIsLoading(false);
+    }
   };
 
   return (
     <div className="center">
       <h1>Login</h1>
+      {isLoading && <h2>Logging In .....</h2>}
+      {<h4>{error}</h4>}
       <form className="place-form" onSubmit={formSubmitHandler}>
         <div className="input-form">
-          <label className="input-label" htmlFor="imputEmail">
+          <label className="input-label" htmlFor="inputEmail">
             Email
           </label>
           <input
             className="input-type"
             type="email"
-            id="imputEmail"
-            name="imputEmail"
+            id="inputEmail"
+            name="inputEmail"
             onChange={emailChangeHandler}
             value={inputEmail}
             placeholder="Enter Email"

@@ -28,14 +28,14 @@ const login = async (req, res, next) => {
     console.log("Login Succesful");
   } catch (err) {
     console.log("Login Failed");
-    const error = HttpError("Invalid input check inputs", 422);
+    const error = new HttpError("Invalid input check inputs", 422);
     return next(error);
   }
 
   // check user validation
   if (!existingUser || existingUser.password !== password) {
     console.log("Invalid Email, Password");
-    const error = HttpError("Invalid Email, Password", 422);
+    const error = new HttpError("Invalid Email, Password", 422);
     return next(error);
   }
 
@@ -55,7 +55,7 @@ const signup = async (req, res, next) => {
     );
   }
 
-  const { name, email, password, image } = req.body;
+  const { name, email, password } = req.body;
 
   let existingUser;
   try {
@@ -77,7 +77,8 @@ const signup = async (req, res, next) => {
     name,
     email,
     password,
-    image,
+    image:
+      "https://1000logos.net/wp-content/uploads/2016/10/Apple-Logo-500x281.png",
     places: [],
   });
 

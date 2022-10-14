@@ -41,6 +41,13 @@ const Navigation = (props) => {
               </Link>
             </li>
           )}
+          {!auth.isLoggedIn && (
+            <li>
+              <Link to="/signup" className="navigation-link">
+                Signup
+              </Link>
+            </li>
+          )}
           {auth.isLoggedIn && (
             <li>
               <button onClick={auth.logout}>Logout</button>
