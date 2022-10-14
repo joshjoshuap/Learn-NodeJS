@@ -37,6 +37,7 @@ const Login = () => {
 
       const data = await res.json();
 
+      // if response is not ok or fetch failed
       if (!res.ok) {
         setIsLoading(false);
         throw new Error(data.message);
@@ -44,7 +45,7 @@ const Login = () => {
 
       navigate("/"); // redirect to login if signup success
       setIsLoading(false);
-      auth.login(); // set logged in session
+      auth.login(data.user.id); // set logged in session
     } catch (err) {
       console.log("Login Failed", err);
       setError(err.message);

@@ -1,19 +1,45 @@
+import { useEffect, useState } from "react";
 import UserList from "./UserList";
 
 const User = () => {
-  const USERS = [
-    {
-      id: "u1",
-      name: "Joshua",
-      image:
-        "https://1000logos.net/wp-content/uploads/2016/10/Apple-Logo-500x281.png",
-      places: 3,
-    },
-  ];
+  const [userData, setUserData] = useState();
+  const [isLoading, setIsLoading] = useState(true);
+  // const [error, setError] = useState();
+
+  useEffect(() => {
+    const getUserFetch = async () => {
+      try {
+        // setIsLoading(true);
+        const res = await fetch("http://localhost:5000/api/users/");
+        const data = await res.json();
+
+        // if response is not ok or fetch failed
+        if (!res.ok) {
+          setIsLoading(true);
+          throw new Error(data.message);
+        }
+
+        setUserData(data.users);
+        setIsLoading(false);
+      } catch (err) {
+        // setError(err.message);
+        setIsLoading(true);
+      }
+    };
+
+    getUserFetch();
+  }, []);
+
+  if (isLoading)
+    return (
+      <div className="center">
+        <h3>Loading ...</h3>
+      </div>
+    );
 
   return (
     <div className="center">
-      <UserList items={USERS} />
+      {!isLoading && userData && <UserList items={userData} />}
     </div>
   );
 };

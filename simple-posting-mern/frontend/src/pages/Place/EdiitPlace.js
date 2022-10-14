@@ -1,94 +1,166 @@
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useContext, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { AuthContext } from "../../context/auth-context";
+
 import Button from "../../components/Button";
+import "./AddPlace.css";
 
-const dummy_places = [
-  {
-    id: "p1",
-    title: "Place 1",
-    description: "Sample text description paragraph",
-    imageUrl:
-      "https://luxeadventuretraveler.com/wp-content/uploads/2012/12/Luxe-Adventure-Traveler-Dubai-Burj-Khalifa-6.jpg",
-    address: "City, Dubai",
-    creatorId: "u1",
-  },
-  {
-    id: "p2",
-    title: "Place 2",
-    description: "Sample text description paragraph",
-    imageUrl:
-      "https://luxeadventuretraveler.com/wp-content/uploads/2012/12/Luxe-Adventure-Traveler-Dubai-Burj-Khalifa-6.jpg",
-    address: "City, Dubai",
-    creatorId: "u2",
-  },
-];
+const AddPlace = () => {
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
+  const placeId = useParams().placeId; // get params id App.js - /:userId/places
 
-const EditPlace = () => {
-  const placeId = useParams().placeId; // get place id
-  const identifiedPlace = dummy_places.find((p) => p.id === placeId);
+  const [userPlaces, setUserPlaces] = useState();
 
-  const [editTitle, setEditTitle] = useState(identifiedPlace.title);
-  const [editDescription, setEditDescription] = useState(
-    identifiedPlace.description
-  );
+  const [inputTitle, setInputTitle] = useState("");
+  const [inputDescription, setInputDescription] = useState("");
+  const [inputAddress, setInputAddress] = useState("");
+  const [inputCreator, setInputCreator] = useState("");
+
+  const [title, setTitle] = useState();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState();
+
+  useEffect(() => {
+    const getUserFetch = async () => {
+      try {
+        // setIsLoading(true);
+        const res = await fetch(`http://localhost:5000/api/places/${placeId}`);
+        const data = await res.json();
+        console.log(data);
+        // if response is not ok or fetch failed
+        if (!res.ok) {
+          setIsLoading(true);
+          throw new Error(data.message);
+        }
+
+        setUserPlaces(data);
+        setIsLoading(false);
+      } catch (err) {
+        console.log(err);
+        setIsLoading(true);
+        setError(err.message);
+      }
+    };
+
+    getUserFetch();
+  }, [placeId]);
+
+  // setTitle(userPlaces.place.title);
 
   const titleChangeHandler = (event) => {
-    setEditTitle(event.target.value);
+    setInputTitle(event.target.value);
   };
 
   const descriptionChangeHandler = (event) => {
-    setEditDescription(event.target.value);
+    setInputDescription(event.target.value);
   };
 
-  const formSubmitHandler = (event) => {
+  const addressChangeHandler = (event) => {
+    setInputAddress(event.target.value);
+  };
+
+  const creatorChangeHandler = (event) => {
+    setInputCreator(event.target.value);
+  };
+
+  const formSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(editTitle, editDescription);
-  };
+    try {
+      const res = await fetch(`http://localhost:5000/api/places/${placeId}`, {
+        method: "PATCH",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          title: inputTitle,
+          description: inputDescription,
+          address: inputAddress,
+          creator: auth.userId, // get the user id using context
+        }),
+      });
 
-  if (!identifiedPlace) {
-    return (
-      <div className="place-list center">
-        <h2>No Place Found</h2>
-      </div>
-    );
-  }
+      const data = await res.json();
+      console.log(data);
+
+      // if response is not ok or fetch failed
+      if (!res.ok) {
+        // setIsLoading(false);
+        throw new Error(data.message);
+      }
+
+      navigate("/");
+    } catch (err) {
+      console.log("Signup Failed", err);
+      // setError(err.message);
+      // setIsLoading(false);
+    }
+  };
 
   return (
     <div className="center">
-      <h1>Edit Place</h1>
+      <h1>Add Place</h1>
       <form className="place-form" onSubmit={formSubmitHandler}>
         <div className="input-form">
-          <label className="input-label" htmlFor="editTitle">
+          <label className="input-label" htmlFor="inputTitle">
             Title
           </label>
           <input
             className="input-type"
             type="text"
-            id="editTitle"
-            name="editTitle"
+            id="inputTitle"
+            name="inputTitle"
             onChange={titleChangeHandler}
-            value={editTitle}
+            value={inputTitle}
             placeholder="Enter Title"
           />
         </div>
         <div className="input-form">
-          <label className="input-label" htmlFor="editDescription">
+          <label className="input-label" htmlFor="inputDescription">
             Description
           </label>
           <input
             className="input-type"
             type="text"
-            id="editDescription"
-            name="editDescription"
+            id="inputDescription"
+            name="inputDescription"
             onChange={descriptionChangeHandler}
-            value={editDescription}
+            value={inputDescription}
             placeholder="Enter Decription"
           />
         </div>
-        <Button type="submit" name="Edit" />
+        <div className="input-form">
+          <label className="input-label" htmlFor="inputAddress">
+            Address
+          </label>
+          <input
+            className="input-type"
+            type="text"
+            id="inputAddress"
+            name="inputAddress"
+            onChange={addressChangeHandler}
+            value={inputAddress}
+            placeholder="Enter Decription"
+          />
+        </div>
+        <div className="input-form">
+          <label className="input-label" htmlFor="inputCreator">
+            Creator
+          </label>
+          <input
+            className="input-type"
+            type="text"
+            id="inputCreator"
+            name="inputCreator"
+            onChange={creatorChangeHandler}
+            value={inputCreator}
+            placeholder="Enter Decription"
+          />
+        </div>
+        <Button type="submit" name="Add" />
       </form>
     </div>
   );
 };
 
-export default EditPlace;
+export default AddPlace;

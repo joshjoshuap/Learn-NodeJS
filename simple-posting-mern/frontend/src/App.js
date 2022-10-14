@@ -1,4 +1,4 @@
-import { useState, useCallback, Fragment } from "react";
+import { useState, useCallback } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthContext } from "./context/auth-context";
 import Navigation from "./components/Navigation";
@@ -12,13 +12,16 @@ import Signup from "./pages/User/Signup";
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userId, setUserId] = useState();
 
-  const login = useCallback(() => {
+  const login = useCallback((userId) => {
     setIsLoggedIn(true);
+    setUserId(userId);
   }, []);
 
   const logout = useCallback(() => {
     setIsLoggedIn(false);
+    setUserId(null);
   }, []);
 
   let routes;
@@ -47,7 +50,12 @@ function App() {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}
+      value={{
+        isLoggedIn: isLoggedIn,
+        userId: userId,
+        login: login,
+        logout: logout,
+      }}
     >
       <BrowserRouter>
         <Navigation>

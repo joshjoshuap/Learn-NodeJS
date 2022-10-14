@@ -5,7 +5,7 @@ import "./Navigation.css";
 
 const Navigation = (props) => {
   const auth = useContext(AuthContext);
-
+  const userId = auth.userId;
   return (
     <>
       <nav className="navigation">
@@ -22,14 +22,14 @@ const Navigation = (props) => {
           </li>
           {auth.isLoggedIn && (
             <li>
-              <Link to="/u1/places" className="navigation-link">
+              <Link to={`/${userId}/places`} className="navigation-link">
                 My Places
               </Link>
             </li>
           )}
           {auth.isLoggedIn && (
             <li>
-              <Link to="/places/new" className="navigation-link">
+              <Link to="/place/new" className="navigation-link">
                 Add Place
               </Link>
             </li>

@@ -1,10 +1,20 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../context/auth-context";
 import Button from "../../components/Button";
 import "./AddPlace.css";
 
 const AddPlace = () => {
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
+
   const [inputTitle, setInputTitle] = useState("");
   const [inputDescription, setInputDescription] = useState("");
+  const [inputAddress, setInputAddress] = useState("");
+  const [inputCreator, setInputCreator] = useState("");
+
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [error, setError] = useState();
 
   const titleChangeHandler = (event) => {
     setInputTitle(event.target.value);
@@ -14,9 +24,45 @@ const AddPlace = () => {
     setInputDescription(event.target.value);
   };
 
-  const formSubmitHandler = (event) => {
+  const addressChangeHandler = (event) => {
+    setInputAddress(event.target.value);
+  };
+
+  const creatorChangeHandler = (event) => {
+    setInputCreator(event.target.value);
+  };
+
+  const formSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(inputTitle, inputDescription);
+    try {
+      const res = await fetch("http://localhost:5000/api/places/", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json",
+        },
+        body: JSON.stringify({
+          title: inputTitle,
+          description: inputDescription,
+          address: inputAddress,
+          creator: auth.userId, // get the user id using context
+        }),
+      });
+
+      const data = await res.json();
+      console.log(data);
+
+      // if response is not ok or fetch failed
+      if (!res.ok) {
+        // setIsLoading(false);
+        throw new Error(data.message);
+      }
+
+      navigate("/");
+    } catch (err) {
+      console.log("Signup Failed", err);
+      // setError(err.message);
+      // setIsLoading(false);
+    }
   };
 
   return (
@@ -48,6 +94,34 @@ const AddPlace = () => {
             name="inputDescription"
             onChange={descriptionChangeHandler}
             value={inputDescription}
+            placeholder="Enter Decription"
+          />
+        </div>
+        <div className="input-form">
+          <label className="input-label" htmlFor="inputAddress">
+            Address
+          </label>
+          <input
+            className="input-type"
+            type="text"
+            id="inputAddress"
+            name="inputAddress"
+            onChange={addressChangeHandler}
+            value={inputAddress}
+            placeholder="Enter Decription"
+          />
+        </div>
+        <div className="input-form">
+          <label className="input-label" htmlFor="inputCreator">
+            Creator
+          </label>
+          <input
+            className="input-type"
+            type="text"
+            id="inputCreator"
+            name="inputCreator"
+            onChange={creatorChangeHandler}
+            value={inputCreator}
             placeholder="Enter Decription"
           />
         </div>

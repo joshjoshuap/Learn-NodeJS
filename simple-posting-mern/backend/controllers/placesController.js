@@ -62,13 +62,14 @@ const createPlace = async (req, res, next) => {
     return next(new HttpError("Invalid input check inputs", 422));
   }
 
-  const { title, description, image, address, creator } = req.body; // destructing data from post body json
+  const { title, description, address, creator } = req.body; // destructing data from post body json
 
   // assign new data by model schema
   const addPlace = new PlaceModel({
     title: title,
     description: description,
-    image: image,
+    image:
+      "https://luxeadventuretraveler.com/wp-content/uploads/2012/12/Luxe-Adventure-Traveler-Dubai-Burj-Khalifa-6.jpg",
     address: address,
     creator: creator,
   });
