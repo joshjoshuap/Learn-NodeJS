@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import UserList from "./UserList";
 
 const User = () => {
+  const apiBackendUrl = process.env.REACT_APP_BACKEND_URL;
   const [userData, setUserData] = useState();
   const [isLoading, setIsLoading] = useState(true);
   // const [error, setError] = useState();
@@ -10,7 +11,7 @@ const User = () => {
     const getUserFetch = async () => {
       try {
         // setIsLoading(true);
-        const res = await fetch("http://localhost:5000/api/users/");
+        const res = await fetch(`${apiBackendUrl}/api/users/`);
         const data = await res.json();
 
         // if response is not ok or fetch failed

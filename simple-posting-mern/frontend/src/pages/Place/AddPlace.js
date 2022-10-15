@@ -5,6 +5,7 @@ import Button from "../../components/Button";
 import "./AddPlace.css";
 
 const AddPlace = () => {
+  const apiBackendUrl = process.env.REACT_APP_BACKEND_URL;
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -30,7 +31,7 @@ const AddPlace = () => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      const res = await fetch("http://localhost:5000/api/places/", {
+      const res = await fetch(`${apiBackendUrl}/api/places/`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",

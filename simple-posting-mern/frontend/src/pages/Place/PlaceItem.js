@@ -5,6 +5,7 @@ import Button from "../../components/Button";
 import "./PlaceItem.css";
 
 const PlaceItem = (props) => {
+  const apiBackendUrl = process.env.REACT_APP_BACKEND_URL;
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const userId = auth.userId;
@@ -14,7 +15,7 @@ const PlaceItem = (props) => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      const res = await fetch(`http://localhost:5000/api/places/${placeId}`, {
+      const res = await fetch(`${apiBackendUrl}/api/places/${placeId}`, {
         method: "DELETE",
       });
 

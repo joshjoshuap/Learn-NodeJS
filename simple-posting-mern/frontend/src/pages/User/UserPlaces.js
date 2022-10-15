@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import PlaceList from "../Place/PlaceList";
 
 const UserPlaces = () => {
+  const apiBackendUrl = process.env.REACT_APP_BACKEND_URL;
   const [userPlaces, setUserPlaces] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState();
@@ -15,7 +16,7 @@ const UserPlaces = () => {
       try {
         // setIsLoading(true);
         const res = await fetch(
-          `http://localhost:5000/api/places/user/${userId}`
+          `${apiBackendUrl}/api/places/user/${userId}`
         );
         const data = await res.json();
 

@@ -6,6 +6,7 @@ import Button from "../../components/Button";
 import "./AddPlace.css";
 
 const AddPlace = () => {
+  const apiBackendUrl = process.env.REACT_APP_BACKEND_URL;
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
   const placeId = useParams().placeId; // get params id App.js - /:userId/places
@@ -21,7 +22,7 @@ const AddPlace = () => {
     const getUserFetch = async () => {
       try {
         // setIsLoading(true);
-        const res = await fetch(`http://localhost:5000/api/places/${placeId}`);
+        const res = await fetch(`${apiBackendUrl}/api/places/${placeId}`);
         const data = await res.json();
         // if response is not ok or fetch failed
         if (!res.ok) {
@@ -58,18 +59,21 @@ const AddPlace = () => {
   const formSubmitHandler = async (event) => {
     event.preventDefault();
     try {
-      const res = await fetch(`http://localhost:5000/api/places/${placeId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          title: inputTitle,
-          description: inputDescription,
-          address: inputAddress,
-          creator: auth.userId, // get the user id using context
-        }),
-      });
+      const res = await fetch(
+        `${apiBackendUrl}/api/places/${placeId}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-type": "application/json",
+          },
+          body: JSON.stringify({
+            title: inputTitle,
+            description: inputDescription,
+            address: inputAddress,
+            creator: auth.userId, // get the user id using context
+          }),
+        }
+      );
 
       const data = await res.json();
 

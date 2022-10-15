@@ -5,6 +5,7 @@ import { AuthContext } from "../../context/auth-context";
 import Button from "../../components/Button";
 
 const Signup = () => {
+  const apiBackendUrl = process.env.REACT_APP_BACKEND_URL;
   const auth = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -30,7 +31,7 @@ const Signup = () => {
     event.preventDefault();
     try {
       setIsLoading(true);
-      const res = await fetch("http://localhost:5000/api/users/signup", {
+      const res = await fetch(`${apiBackendUrl}/api/users/signup`, {
         method: "POST",
         headers: {
           "Content-type": "application/json",

@@ -11,7 +11,10 @@ const app = express();
 
 app.use(bodyParser.json()); // parsing json body data
 app.use((req, res, next) => {
-  res.setHeader("Access-Control-Allow-Origin", "*"); // cors access
+  res.setHeader(
+    "Access-Control-Allow-Origin",
+    process.env.ALLOW_ORIGIN_URL
+  ); // cors access
   res.setHeader(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization"
@@ -27,14 +30,14 @@ app.use("/api/users", userRoute); // /api/user/..
 app.use((req, res, next) => {
   const error = new HttpError("Page not Found", 404);
   throw error;
-}); 
+});
 
 // error handling
 app.use((error, req, res, next) => {
   if (res.headerSent) {
     return next(error);
   }
-  res.status(error.code || 500); 
+  res.status(error.code || 500);
   res.json({ message: error.message || "An unkown error occured" });
 });
 
