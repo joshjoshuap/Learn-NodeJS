@@ -13,7 +13,7 @@ app.use(bodyParser.json()); // parsing json body data
 app.use((req, res, next) => {
   res.setHeader(
     "Access-Control-Allow-Origin",
-    process.env.ALLOW_ORIGIN_URL
+    `${process.env.ALLOW_ORIGIN_URL}`
   ); // cors access
   res.setHeader(
     "Access-Control-Allow-Headers",
