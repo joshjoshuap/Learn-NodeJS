@@ -9,7 +9,7 @@ const HttpError = require("./models/http-error");
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(bodyParser.json()); // parsing json body data
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*"); // cors access
   res.setHeader(
@@ -23,22 +23,24 @@ app.use((req, res, next) => {
 app.use("/api/places", placeRoute); // /api/places/..
 app.use("/api/users", userRoute); // /api/user/..
 
+// error 404 not found
 app.use((req, res, next) => {
   const error = new HttpError("Page not Found", 404);
   throw error;
-}); // error 404 not found
+}); 
 
+// error handling
 app.use((error, req, res, next) => {
   if (res.headerSent) {
     return next(error);
   }
-  res.status(error.code || 500); // error handling
+  res.status(error.code || 500); 
   res.json({ message: error.message || "An unkown error occured" });
 });
 
-// Database COnnection, Server Running
+// Database Connection, Server Running
 mongoose
-  .connect(process.env.MONGO_ATLAS_URI)
+  .connect(process.env.MONGODB_ATLAS_URI)
   .then(() => {
     app.listen(process.env.PORT || 5000, () => {
       console.log("Server Running");

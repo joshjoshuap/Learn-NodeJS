@@ -7,9 +7,9 @@ const UserModel = require("../models/user");
 
 // GET: /api/places/user/:uid - Display Place by User
 const getPlacesByUserId = async (req, res, next) => {
+  
   const userId = req.params.uid; // get params id
   let place;
-
   try {
     place = await PlaceModel.find({ creator: userId }); // find & return all object based on user id
   } catch (err) {

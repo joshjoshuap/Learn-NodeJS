@@ -1,4 +1,5 @@
 const { validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
 
 const HttpError = require("../models/http-error");
 const UserModel = require("../models/user");
@@ -32,10 +33,27 @@ const login = async (req, res, next) => {
     return next(error);
   }
 
-  // check user validation
-  if (!existingUser || existingUser.password !== password) {
-    console.log("Invalid Email, Password");
-    const error = new HttpError("Invalid Email, Password", 422);
+  // check user exist
+  if (!existingUser) {
+    console.log("Invalid Email");
+    const error = new HttpError("Invalid Email", 422);
+    return next(error);
+  }
+
+  // check password
+  let isValidPassword = false;
+  try {
+    isValidPassword = await bcrypt.compare(password, existingUser.password);
+  } catch (err) {
+    console.log("Invalid Password");
+    const error = new HttpError("Invalid Password", 422);
+    return next(error);
+  }
+
+  // check password
+  if (!isValidPassword) {
+    console.log("Invalid Password");
+    const error = new HttpError("Invalid Password", 422);
     return next(error);
   }
 
@@ -75,11 +93,20 @@ const signup = async (req, res, next) => {
     return next(error);
   }
 
+  let hashedPassword;
+  try {
+    hashedPassword = await bcrypt.hash(password, 12);
+  } catch (err) {
+    console.log("Hashing Password Failed", err);
+    const error = new HttpError("Hashing Password Failed", 500);
+    return next(error);
+  }
+
   // create new user
   const createUser = new UserModel({
     name,
     email,
-    password,
+    password: hashedPassword,
     image:
       "https://1000logos.net/wp-content/uploads/2016/10/Apple-Logo-500x281.png",
     places: [],
