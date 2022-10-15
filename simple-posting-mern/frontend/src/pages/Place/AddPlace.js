@@ -11,7 +11,6 @@ const AddPlace = () => {
   const [inputTitle, setInputTitle] = useState("");
   const [inputDescription, setInputDescription] = useState("");
   const [inputAddress, setInputAddress] = useState("");
-  const [inputCreator, setInputCreator] = useState("");
 
   // const [isLoading, setIsLoading] = useState(false);
   // const [error, setError] = useState();
@@ -26,10 +25,6 @@ const AddPlace = () => {
 
   const addressChangeHandler = (event) => {
     setInputAddress(event.target.value);
-  };
-
-  const creatorChangeHandler = (event) => {
-    setInputCreator(event.target.value);
   };
 
   const formSubmitHandler = async (event) => {
@@ -49,7 +44,6 @@ const AddPlace = () => {
       });
 
       const data = await res.json();
-      console.log(data);
 
       // if response is not ok or fetch failed
       if (!res.ok) {
@@ -59,7 +53,7 @@ const AddPlace = () => {
 
       navigate("/");
     } catch (err) {
-      console.log("Signup Failed", err);
+      console.log("Creating Failed", err);
       // setError(err.message);
       // setIsLoading(false);
     }
@@ -108,20 +102,6 @@ const AddPlace = () => {
             name="inputAddress"
             onChange={addressChangeHandler}
             value={inputAddress}
-            placeholder="Enter Decription"
-          />
-        </div>
-        <div className="input-form">
-          <label className="input-label" htmlFor="inputCreator">
-            Creator
-          </label>
-          <input
-            className="input-type"
-            type="text"
-            id="inputCreator"
-            name="inputCreator"
-            onChange={creatorChangeHandler}
-            value={inputCreator}
             placeholder="Enter Decription"
           />
         </div>

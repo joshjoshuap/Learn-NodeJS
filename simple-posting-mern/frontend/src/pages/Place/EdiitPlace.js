@@ -10,16 +10,12 @@ const AddPlace = () => {
   const navigate = useNavigate();
   const placeId = useParams().placeId; // get params id App.js - /:userId/places
 
-  const [userPlaces, setUserPlaces] = useState();
-
   const [inputTitle, setInputTitle] = useState("");
   const [inputDescription, setInputDescription] = useState("");
   const [inputAddress, setInputAddress] = useState("");
-  const [inputCreator, setInputCreator] = useState("");
 
-  const [title, setTitle] = useState();
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState();
+  // const [isLoading, setIsLoading] = useState(false);
+  // const [error, setError] = useState();
 
   useEffect(() => {
     const getUserFetch = async () => {
@@ -27,26 +23,25 @@ const AddPlace = () => {
         // setIsLoading(true);
         const res = await fetch(`http://localhost:5000/api/places/${placeId}`);
         const data = await res.json();
-        console.log(data);
         // if response is not ok or fetch failed
         if (!res.ok) {
-          setIsLoading(true);
+          // setIsLoading(true);
           throw new Error(data.message);
         }
 
-        setUserPlaces(data);
-        setIsLoading(false);
+        setInputTitle(data.place.title);
+        setInputDescription(data.place.description);
+        setInputAddress(data.place.address);
+        // setIsLoading(false);
       } catch (err) {
         console.log(err);
-        setIsLoading(true);
-        setError(err.message);
+        // setIsLoading(true);
+        // setError(err.message);
       }
     };
 
     getUserFetch();
   }, [placeId]);
-
-  // setTitle(userPlaces.place.title);
 
   const titleChangeHandler = (event) => {
     setInputTitle(event.target.value);
@@ -58,10 +53,6 @@ const AddPlace = () => {
 
   const addressChangeHandler = (event) => {
     setInputAddress(event.target.value);
-  };
-
-  const creatorChangeHandler = (event) => {
-    setInputCreator(event.target.value);
   };
 
   const formSubmitHandler = async (event) => {
@@ -81,7 +72,6 @@ const AddPlace = () => {
       });
 
       const data = await res.json();
-      console.log(data);
 
       // if response is not ok or fetch failed
       if (!res.ok) {
@@ -91,7 +81,7 @@ const AddPlace = () => {
 
       navigate("/");
     } catch (err) {
-      console.log("Signup Failed", err);
+      console.log("Edit falied", err);
       // setError(err.message);
       // setIsLoading(false);
     }
@@ -143,21 +133,7 @@ const AddPlace = () => {
             placeholder="Enter Decription"
           />
         </div>
-        <div className="input-form">
-          <label className="input-label" htmlFor="inputCreator">
-            Creator
-          </label>
-          <input
-            className="input-type"
-            type="text"
-            id="inputCreator"
-            name="inputCreator"
-            onChange={creatorChangeHandler}
-            value={inputCreator}
-            placeholder="Enter Decription"
-          />
-        </div>
-        <Button type="submit" name="Add" />
+        <Button type="submit" name="Update" />
       </form>
     </div>
   );

@@ -119,7 +119,7 @@ const updatePlace = async (req, res, next) => {
 
   let place;
   const placeId = req.params.pid;
-  const { title, description, image, address, creator } = req.body; // destructing data from post body json
+  const { title, description, address, creator } = req.body; // destructing data from post body json
 
   try {
     place = await PlaceModel.findById(placeId);
@@ -133,7 +133,8 @@ const updatePlace = async (req, res, next) => {
   // get current data and rewrite old data
   place.title = title;
   place.description = description;
-  place.image = image;
+  place.image =
+    "https://luxeadventuretraveler.com/wp-content/uploads/2012/12/Luxe-Adventure-Traveler-Dubai-Burj-Khalifa-6.jpg";
   place.address = address;
   place.creator = creator;
 
